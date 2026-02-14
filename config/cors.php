@@ -19,8 +19,8 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'https://oussama-oubaha-ruby.vercel.app')],
-
+    'allowed_origins' => [env('FRONTEND_URL', 'https://oussama-oubaha.vercel.app'),
+    'http://localhost:5173'],
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
