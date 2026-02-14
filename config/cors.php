@@ -19,8 +19,11 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'https://oussama-oubaha.vercel.app'),
-    'http://localhost:5173'],
+    'allowed_origins' => [
+        'https://oussama-oubaha.vercel.app',
+        'http://localhost:5173',
+        env('FRONTEND_URL') // Optional: Keep this for flexibility if you set it in Railway
+    ],
     'allowed_origins_patterns' => [],
 
     'allowed_headers' => ['*'],
