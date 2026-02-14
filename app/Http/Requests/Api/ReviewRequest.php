@@ -15,10 +15,12 @@ class ReviewRequest extends FormRequest
     {
         return [
             'author' => 'required|string|max:255',
+            'guest_email' => 'nullable|email|max:255',
             'role' => 'nullable|string|max:100',
             'content' => 'required|string|max:2000',
             'rating' => 'nullable|integer|min:1|max:5',
             'is_active' => 'nullable|boolean',
+            'is_published' => 'nullable|boolean',
         ];
     }
 }

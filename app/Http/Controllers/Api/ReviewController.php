@@ -11,21 +11,20 @@ class ReviewController extends Controller
 {
     public function index()
     {
-        return Review::where('is_active', true)->get();
+        return Review::where('is_published', true)->orderBy('created_at', 'desc')->get();
     }
     
     public function indexAdmin()
     {
-        return Review::all();
+        return Review::orderBy('created_at', 'desc')->get();
     }
 
     public function store(ReviewRequest $request)
     {
-        // Public reviews are inactive by default
+        // Public reviews are inactive/unpublished by default
         $data = $request->validated();
-        if (!isset($data['is_active'])) {
-            $data['is_active'] = false;
-        }
+        $data['is_active'] = false;
+        $data['is_published'] = false;
         
         $review = Review::create($data);
         return response()->json($review, 201);
@@ -37,9 +36,18 @@ class ReviewController extends Controller
         return response()->json($review);
     }
 
+    public function publish(Review $review)
+    {
+        $review->update([
+            'is_published' => !$review->is_published,
+            'is_active' => !$review->is_published // Usually active when published
+        ]);
+        return response()->json($review);
+    }
+
     public function destroy(Review $review)
     {
         $review->delete();
-        return response()->noContent();
+        return response()->json(['message' => 'Review deleted successfully']);
     }
 }

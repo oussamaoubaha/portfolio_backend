@@ -11,13 +11,16 @@ class Review extends Model
 
     protected $fillable = [
         'author',
+        'guest_email',
         'role',
         'content',
         'rating',
         'is_active',
+        'is_published',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
+        'is_published' => 'boolean',
     ];
 }

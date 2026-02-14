@@ -10,13 +10,12 @@ class Profile extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'title',
-        'subtitle',
-        'description',
-        'email',
-        'location',
-        'hero_image',
-        'about_text',
+        'name', 'title', 'subtitle', 'description', 
+        'email', 'location', 'hero_image', 'about_text', 
+        'cv_url', 'social_links'
+    ];
+
+    protected $casts = [
+        'social_links' => 'array',
     ];
 }

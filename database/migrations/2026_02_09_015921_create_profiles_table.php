@@ -21,6 +21,8 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('hero_image')->nullable();
             $table->text('about_text')->nullable();
+            $table->string('cv_url')->nullable();
+            $table->json('social_links')->nullable(); // Storage for linkedin, github, etc.
             $table->timestamps();
         });
     }
