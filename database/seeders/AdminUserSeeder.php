@@ -15,7 +15,7 @@ class AdminUserSeeder extends Seeder
     public function run(): void
     {
         $email = 'admin@oussama.com';
-        $password = 'password123';
+        $password = '97999799';
 
         $user = User::where('email', $email)->first();
 
