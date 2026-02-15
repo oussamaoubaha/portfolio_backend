@@ -79,3 +79,33 @@ Route::get('/debug-auth', function () {
         'rehash_needed' => \Illuminate\Support\Facades\Hash::needsRehash($user->password),
     ]);
 });
+
+// TEMPORARY PROD HELPER: Create Admin User
+Route::get('/create-admin-user', function () {
+    $email = 'admin@oussama.com';
+    $password = '97999799';
+    
+    $user = \App\Models\User::firstOrCreate(
+        ['email' => $email],
+        [
+            'name' => 'Admin Oussama',
+            'password' => \Illuminate\Support\Facades\Hash::make($password),
+            'role' => 'admin',
+            'email_verified_at' => now(),
+        ]
+    );
+
+    // Ensure password is updated if user existed but had wrong password
+    if (!$user->wasRecentlyCreated) {
+        $user->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($password),
+            'role' => 'admin',
+        ]);
+    }
+
+    return response()->json([
+        'message' => $user->wasRecentlyCreated ? 'User Created Successfully' : 'User Updated Successfully',
+        'email' => $user->email,
+        'user_id' => $user->id,
+    ]);
+});
