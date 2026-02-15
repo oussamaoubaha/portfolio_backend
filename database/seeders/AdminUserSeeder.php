@@ -17,22 +17,22 @@ class AdminUserSeeder extends Seeder
         $email = 'admin@oussama.com';
         $password = '97999799';
 
-        $user = User::where('email', $email)->first();
-
-        if (!$user) {
-            User::create([
+        $user = User::firstOrCreate(
+            ['email' => $email],
+            [
                 'name' => 'Admin Oussama',
-                'email' => $email,
-                'password' => Hash::make($password),
-                'role' => 'admin', // Ensure you have a role column or logic handling this
-            ]);
-            $this->command->info("Admin user created: {$email}");
-        } else {
-            $user->update([
                 'password' => Hash::make($password),
                 'role' => 'admin',
-            ]);
-            $this->command->info("Admin user updated: {$email}");
-        }
+                'email_verified_at' => now(),
+            ]
+        );
+
+        // Always update password and role to ensure they are correct (in case of manual changes or hashing issues)
+        $user->update([
+            'password' => Hash::make($password),
+            'role' => 'admin',
+        ]);
+        
+        $this->command->info("Admin user setup complete: {$email}");
     }
 }

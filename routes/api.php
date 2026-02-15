@@ -66,7 +66,16 @@ Route::get('/debug-auth', function () {
     $password = '97999799';
     $user = \App\Models\User::where('email', $email)->first();
     
-    if (!$user) return response()->json(['error' => 'User not found'], 404);
+    if (!$user) {
+        return response()->json([
+            'error' => 'User not found',
+            'env' => app()->environment(),
+            'database' => \Illuminate\Support\Facades\DB::getDatabaseName(),
+            'has_users_table' => \Illuminate\Support\Facades\Schema::hasTable('users'),
+            'has_profiles_table' => \Illuminate\Support\Facades\Schema::hasTable('profiles'),
+            'count_users' => \App\Models\User::count(),
+        ], 404);
+    }
     
     $check = \Illuminate\Support\Facades\Hash::check($password, $user->password);
     
@@ -77,6 +86,8 @@ Route::get('/debug-auth', function () {
         'hash_check_success' => $check,
         'hash_sample' => substr($user->password, 0, 10) . '...',
         'rehash_needed' => \Illuminate\Support\Facades\Hash::needsRehash($user->password),
+        'env' => app()->environment(),
+        'has_profiles_table' => \Illuminate\Support\Facades\Schema::hasTable('profiles'),
     ]);
 });
 
