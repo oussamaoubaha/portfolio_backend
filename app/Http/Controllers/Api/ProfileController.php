@@ -17,7 +17,21 @@ class ProfileController extends Controller
     public function update(ProfileUpdateRequest $request)
     {
         $profile = Profile::firstOrCreate(['id' => 1]);
-        $profile->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('hero_image')) {
+            // Delete old image if exists
+            if ($profile->hero_image && file_exists(public_path($profile->hero_image))) {
+                @unlink(public_path($profile->hero_image));
+            }
+
+            $file = $request->file('hero_image');
+            $filename = 'profile_' . time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path('uploads/profiles'), $filename);
+            $data['hero_image'] = '/uploads/profiles/' . $filename;
+        }
+
+        $profile->update($data);
         return response()->json($profile);
     }
 }

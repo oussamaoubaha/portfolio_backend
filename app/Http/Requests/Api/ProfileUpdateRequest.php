@@ -20,7 +20,7 @@ class ProfileUpdateRequest extends FormRequest
             'email' => 'required|email|max:255',
             'location' => 'nullable|string|max:255',
             'about_text' => 'nullable|string',
-            'hero_image' => 'nullable|string',
+            'hero_image' => 'nullable', // Allow string URL or File upload
             'cv_url' => 'nullable|string',
             'social_links' => 'nullable|array',
             'description' => 'nullable|string',
