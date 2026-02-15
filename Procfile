@@ -1,1 +1,1 @@
-web: php artisan migrate --force && php artisan db:seed --class=AdminUserSeeder --force && vendor/bin/heroku-php-apache2 public/
+web: php artisan migrate --force && php artisan db:seed --class=AdminUserSeeder --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}
