@@ -10,6 +10,8 @@ class ProfileSeeder extends Seeder
     /**
      * Run the database seeds.
      */
+    public function run(): void
+    {
         \App\Models\Profile::updateOrCreate(
             ['email' => 'oussama.oubaha24@gmail.com'],
             [
@@ -30,4 +32,5 @@ class ProfileSeeder extends Seeder
                 ],
             ]
         );
+    }
 }
