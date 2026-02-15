@@ -135,22 +135,35 @@ class GeminiController extends Controller
                 }
             }
 
-            // Database Knowledge Discovery
+            // Database Knowledge Discovery (Optimized Fuzzy Search)
             if (empty($foundContent)) {
-                $allKnowledge = AssistantKnowledge::all();
-                foreach ($allKnowledge as $item) {
-                    $keywords = array_map(function($k) { return trim(mb_strtolower($k, 'UTF-8')); }, explode(',', $item->keywords ?? ''));
-                    foreach ($keywords as $keyword) {
-                        if (!empty($keyword) && (str_contains($normalizedMessage, $keyword) || str_contains($keyword, $normalizedMessage))) {
-                            $foundContent = $item->answer;
-                            $source = 'database';
-                            break 2;
+                // 1. Direct Fuzzy Match (Whole Sentence)
+                $knowledge = AssistantKnowledge::where('question', 'LIKE', "%{$userMessage}%")
+                    ->orWhere('keywords', 'LIKE', "%{$userMessage}%")
+                    ->orWhere('answer', 'LIKE', "%{$userMessage}%")
+                    ->first();
+
+                if ($knowledge) {
+                    $foundContent = $knowledge->answer;
+                    $source = 'database_exact';
+                } else {
+                    // 2. Word-based Fuzzy Match (Keyword Search)
+                    $words = explode(' ', $normalizedMessage);
+                    $words = array_filter($words, function($w) { return strlen($w) > 3; }); // Filter short words
+                    
+                    if (!empty($words)) {
+                        $query = AssistantKnowledge::query();
+                        foreach ($words as $word) {
+                            $query->orWhere('keywords', 'LIKE', "%{$word}%")
+                                  ->orWhere('question', 'LIKE', "%{$word}%");
                         }
-                    }
-                    if (str_contains($normalizedMessage, $this->normalizeString($item->question))) {
-                        $foundContent = $item->answer;
-                        $source = 'database';
-                        break;
+                        // Order by length of answer or relevance if possible, but first match is acceptable for now
+                        $knowledge = $query->first(); // Get the first matching record
+                        
+                        if ($knowledge) {
+                            $foundContent = $knowledge->answer;
+                            $source = 'database_fuzzy';
+                        }
                     }
                 }
             }

@@ -120,3 +120,12 @@ Route::get('/create-admin-user', function () {
         'user_id' => $user->id,
     ]);
 });
+
+// DEBUG HELPER: List all Knowledge Base entries
+Route::get('/debug-knowledge', function () {
+    $knowledge = \App\Models\AssistantKnowledge::all();
+    return response()->json([
+        'count' => $knowledge->count(),
+        'entries' => $knowledge
+    ]);
+});
