@@ -20,7 +20,10 @@ class ProfileUpdateRequest extends FormRequest
             'email' => 'required|email|max:255',
             'location' => 'nullable|string|max:255',
             'about_text' => 'nullable|string',
-            'hero_image' => 'nullable|string|max:2048', // Allow URL or URL-safe string
+            'hero_image' => 'nullable|string',
+            'cv_url' => 'nullable|string',
+            'social_links' => 'nullable|array',
+            'description' => 'nullable|string',
         ];
     }
 }
