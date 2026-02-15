@@ -59,3 +59,23 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Compatibility route for existing AdminAILogs
     Route::get('/admin/ai-logs', [\App\Http\Controllers\Api\GeminiController::class, 'indexAdmin']);
 });
+
+// DEBUG HELPER (Remove in production)
+Route::get('/debug-auth', function () {
+    $email = 'admin@oussama.com';
+    $password = '97999799';
+    $user = \App\Models\User::where('email', $email)->first();
+    
+    if (!$user) return response()->json(['error' => 'User not found'], 404);
+    
+    $check = \Illuminate\Support\Facades\Hash::check($password, $user->password);
+    
+    return response()->json([
+        'user_id' => $user->id,
+        'email' => $user->email,
+        'password_is_hashed' => strlen($user->password) > 20,
+        'hash_check_success' => $check,
+        'hash_sample' => substr($user->password, 0, 10) . '...',
+        'rehash_needed' => \Illuminate\Support\Facades\Hash::needsRehash($user->password),
+    ]);
+});
